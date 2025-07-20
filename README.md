@@ -2,12 +2,10 @@
 
 ## Outline
 
-1. [ ] Collect a username
+1. [x] Collect a username
    1. [x] From the CLI at runtime
    2. [x] By reading the column of users in the Google sheet
-      1. [ ] Don't grab data from the user if we've done this more recently than 10 minutes ago
-      2. [ ] New entries will be executed without delay
-2. [ x Get the data for that user
+2. [x] Get the data for that user
    1. [x] Initial get_user api call
    2. [x] Make sure we're definitely getting the item data from the user
 3. [x] Format the data in the shape we need
