@@ -21,6 +21,9 @@ class RuneProfileAPI:
         """
         self.base_url = base_url.rstrip("/")
         self.session = requests.Session()
+        self.session.headers.update(
+            {"User-Agent": "github.com/sdutill/clan_assign (discord@big_fat_nerd)"}
+        )
 
     def _make_request(
         self, endpoint: str, params: Optional[Dict[str, Any]] = None
