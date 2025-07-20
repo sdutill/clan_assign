@@ -1,7 +1,4 @@
-import json
 import sys
-from datetime import datetime
-from typing import Dict
 
 import gspread
 from google.oauth2.service_account import Credentials
@@ -82,18 +79,6 @@ class GoogleSheetsEditor:
 
         print(self.players)
 
-    def setup_existing_sheet(self: str) -> None:
-        """
-        Desc
-
-        Args:
-
-
-        Returns:
-
-        """
-        return None
-
     def update_player_data(
         self,
         username: str,
@@ -119,30 +104,34 @@ class GoogleSheetsEditor:
             # Create or get worksheet with username
             try:
                 worksheet = self.sheet.worksheet(username)
-                print(f"Found existing sheet for {username}, clearing data...")
-                worksheet.clear()
             except gspread.WorksheetNotFound:
-                print(f"Creating new sheet for {username}...")
-                worksheet = self.sheet.add_worksheet(title=username, rows=1000, cols=10)
+                # print(f"Creating new sheet for {username}...")
+                print(f"Error: No sheet found for {username}...")
+                sys.exit()
 
+            # Start at row 750
+            item_data_start = 750
             # Set up headers
             headers = ["name", "id", "quantity"]
-            worksheet.update("A1:C1", [headers])
+            worksheet.update(f"A{item_data_start}:C{item_data_start}", [headers])
 
             # Prepare data rows
             data_rows = []
+
             for item in items:
                 # Handle each item as a JSON object/dictionary
                 name = item.get("name", "")
                 item_id = item.get("id", "")
                 quantity = item.get("quantity", item.get("count", 0))
-
-                data_rows.append([name, item_id, quantity])
-
+                # Lowercase name to more easily support lookup
+                data_rows.append([name.lower(), item_id, quantity])
             # Update the sheet with all data at once (more efficient)
             if data_rows:
-                end_row = len(data_rows) + 1
-                worksheet.update(f"A2:C{end_row}", data_rows)
+                data_start_row = (
+                    item_data_start + 1
+                )  # Data starts one row after headers
+                end_row = len(data_rows) + item_data_start  # Last row with data
+                worksheet.update(f"A{data_start_row}:C{end_row}", data_rows)
                 print(
                     f"✅ Successfully updated {username}'s sheet with {len(data_rows)} items"
                 )
